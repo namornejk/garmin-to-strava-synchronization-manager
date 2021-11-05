@@ -6,6 +6,7 @@ import cz.uhk.garmintostravasynchronizationmanager.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,8 +23,8 @@ public class ActivityController {
         this.activityService = activityService;
     }
 
-    @GetMapping("/getActivity")
-    public Dto getActivity(@RequestParam(name="id", required = false) Long id, Model model){
+    @GetMapping("/getActivity/{id}")
+    public Dto getActivity(@PathVariable(name="id", required = false) Long id, Model model){
         List<String> errors = new ArrayList<>();
         Activity activity = null;
 
