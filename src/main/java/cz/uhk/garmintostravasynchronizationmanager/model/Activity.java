@@ -13,9 +13,10 @@ public class Activity {
     private String name;
     private String description;
     private String type;
-    private Long athleteId;
     private float distance;
     private int movingTime;
+    private String startDateLocal;
+    private boolean isPrivate;
 
     public Activity() {
     }
@@ -25,14 +26,14 @@ public class Activity {
         this.name = name;
     }
 
-    public Activity(Long id, String name, String description, String type, Long athleteId, float distance, int movingTime) {
-        this.id = id;
+    public Activity(String name, String description, String type, float distance, int movingTime, String startDateLocal, boolean isPrivate) {
         this.name = name;
         this.description = description;
         this.type = type;
-        this.athleteId = athleteId;
         this.distance = distance;
         this.movingTime = movingTime;
+        this.startDateLocal = startDateLocal;
+        this.isPrivate = isPrivate;
     }
 
     public Long getId() {
@@ -67,14 +68,6 @@ public class Activity {
         this.type = type;
     }
 
-    public Long getAthleteId() {
-        return athleteId;
-    }
-
-    public void setAthleteId(Long athleteId) {
-        this.athleteId = athleteId;
-    }
-
     public float getDistance() {
         return distance;
     }
@@ -89,5 +82,21 @@ public class Activity {
 
     public void setMovingTime(int movingTime) {
         this.movingTime = movingTime;
+    }
+
+    public String getStartDateLocal() {
+        return startDateLocal;
+    }
+
+    public void setStartDateLocal(String startDateLocal) {
+        this.startDateLocal = startDateLocal;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 }
