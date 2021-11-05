@@ -13,7 +13,7 @@ public class ActivityService {
     @Autowired
     public ActivityService(IActivityDao activityDao){
         this.activityDao = activityDao;
-        activityDao.save(new Activity(1L, "Morning Run"));
+        activityDao.save(new Activity("Morning Run"));
     }
 
     public Activity getActivity(Long activityId){

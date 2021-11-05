@@ -3,6 +3,7 @@ package cz.uhk.garmintostravasynchronizationmanager.model;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Activity {
@@ -10,6 +11,8 @@ public class Activity {
     @Id
     @GeneratedValue
     private Long id;
+    @ManyToOne
+    private User user;
     private String name;
     private String description;
     private String type;
@@ -21,19 +24,15 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity(Long id, String name){
+    public Activity(String name){
         this.id = id;
         this.name = name;
     }
 
-    public Activity(String name, String description, String type, float distance, int movingTime, String startDateLocal, boolean isPrivate) {
+    public Activity(User user, String name){
+        this.id = id;
+        this.user = user;
         this.name = name;
-        this.description = description;
-        this.type = type;
-        this.distance = distance;
-        this.movingTime = movingTime;
-        this.startDateLocal = startDateLocal;
-        this.isPrivate = isPrivate;
     }
 
     public Long getId() {
@@ -42,6 +41,14 @@ public class Activity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getName() {
