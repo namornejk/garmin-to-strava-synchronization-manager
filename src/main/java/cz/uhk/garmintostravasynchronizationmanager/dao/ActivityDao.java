@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface IActivityDao extends JpaRepository<Activity, Long> {
+public interface ActivityDao extends JpaRepository<Activity, Long> {
 }

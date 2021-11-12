@@ -1,6 +1,6 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
-import cz.uhk.garmintostravasynchronizationmanager.dao.IActivityDao;
+import cz.uhk.garmintostravasynchronizationmanager.dao.ActivityDao;
 import cz.uhk.garmintostravasynchronizationmanager.model.Activity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActivityService {
 
-    private IActivityDao activityDao;
+    private ActivityDao activityDao;
 
     @Autowired
-    public ActivityService(IActivityDao activityDao){
+    public ActivityService(ActivityDao activityDao){
         this.activityDao = activityDao;
         activityDao.save(new Activity("Morning Run"));
     }
