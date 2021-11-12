@@ -1,7 +1,7 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
 
-public class Athlete {
+public class AthleteResponse {
 
     private String id;
     private String username;
@@ -9,7 +9,7 @@ public class Athlete {
     private String lastname;
     private String profile_medium;
 
-    public Athlete(String id, String username, String firstname, String lastname, String profile_medium) {
+    public AthleteResponse(String id, String username, String firstname, String lastname, String profile_medium) {
         this.id = id;
         this.username = username;
         this.firstname = firstname;
@@ -17,7 +17,7 @@ public class Athlete {
         this.profile_medium = profile_medium;
     }
 
-    public Athlete() { }
+    public AthleteResponse() { }
 
     public String getId() {
         return id;
