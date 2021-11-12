@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActivityService {
 
-    private IActivityDao activityDao;
+    private final IActivityDao activityDao;
 
     @Autowired
     public ActivityService(IActivityDao activityDao){

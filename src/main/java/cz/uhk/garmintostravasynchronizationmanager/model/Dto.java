@@ -10,8 +10,7 @@ public class Dto {
     public Object dataObject;
     public List<String> errors;
 
-    public Dto() {
-    }
+    public Dto() {}
 
     public Dto(Object dataObject, List<String> errors) {
         this.dataObject = dataObject;
