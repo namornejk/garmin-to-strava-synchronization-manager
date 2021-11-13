@@ -11,21 +11,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    private UserService authService;
-    private StravaService stravaService;
+    private UserService userService;
 
     public UserController(){}
 
     @Autowired
-    public UserController(UserService authService){
-        this.authService = authService;
+    public UserController(UserService userService){
+        this.userService = userService;
     }
 
     @PostMapping("/code")
     public ResponseEntity<UserAthlete> codeAuth(@RequestParam(name = "code")String code){
-        UserAthlete userAthlete = authService.initAuth(code).get();
+        UserAthlete userAthlete = userService.initAuth(code).get();
 
-        ResponseEntity response = ResponseEntity.ok()
+        ResponseEntity<UserAthlete> response = ResponseEntity.ok()
                 .header("authorization", userAthlete.getUserToken())
                 .body(userAthlete);
 
@@ -34,6 +33,6 @@ public class UserController {
 
     @PostMapping("/me")
     public UserAthlete getUser(@RequestParam(name = "userToken")String userToken){
-        return authService.getUser(userToken);
+        return userService.getUser(userToken);
     }
 }

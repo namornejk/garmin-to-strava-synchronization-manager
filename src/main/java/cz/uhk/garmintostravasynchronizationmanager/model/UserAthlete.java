@@ -1,25 +1,24 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.net.URL;
 
 @Entity
 public class UserAthlete {
 
     @Id
-    private long id;
+    private String id;
     private String firstName;
     private String lastName;
-    private URL profilePicture;
+    private String profilePicture;
     private String stravaAuthorizationToken;
     private String stravaRefreshToken;
     private String userToken;
 
     public UserAthlete(){}
 
-    public UserAthlete(String firstName, String lastName, URL profilePicture, String stravaAuthorizationToken, String stravaRefreshToken, String userToken) {
+    public UserAthlete(String id, String firstName, String lastName, String profilePicture, String stravaAuthorizationToken, String stravaRefreshToken, String userToken) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.profilePicture = profilePicture;
@@ -28,7 +27,7 @@ public class UserAthlete {
         this.userToken = userToken;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -48,11 +47,11 @@ public class UserAthlete {
         this.lastName = lastName;
     }
 
-    public URL getProfilePicture() {
+    public String getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(URL profilePicture) {
+    public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
 

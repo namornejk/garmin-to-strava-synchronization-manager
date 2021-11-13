@@ -21,4 +21,28 @@ public class AthleteAuthorizationResponse {
 
     public AthleteAuthorizationResponse() {
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public AthleteResponse getAthlete() {
+        return athlete;
+    }
+
+    public void setAthlete(AthleteResponse athlete) {
+        this.athlete = athlete;
+    }
 }

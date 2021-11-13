@@ -1,6 +1,7 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
 import cz.uhk.garmintostravasynchronizationmanager.dao.AthleteDao;
+import cz.uhk.garmintostravasynchronizationmanager.model.AthleteAuthorizationResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.UserAthlete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ public class UserService {
     }
 
     public Optional<UserAthlete> initAuth(String code){
-        AthleteResponse athleteResponse = stravaService.getAthlete(code);
-        UserAthlete userAthlete = athleteResponseToUserAthlete(athleteResponse.getStravaAthlete);
+        AthleteAuthorizationResponse athleteAuthorizationResponse = stravaService.authorize(code).get();
+        UserAthlete userAthlete = athleteResponseToUserAthlete(athleteAuthorizationResponse);
         
         putAthlete(userAthlete);
 
@@ -37,13 +38,13 @@ public class UserService {
         return athleteDao.findByUserToken(userToken);
     }
 
-    private UserAthlete athleteResponseToUserAthlete(AthleteResponse athleteResponse){
-        UserAthlete userAthlete = new UserAthlete(athleteResponse.getStravaAthlete.getId(),
-                athleteResponse.getStravaAthlete.getFirstName(),
-                athleteResponse.getStravaAthlete.getLastName(),
-                athleteResponse.getStravaAthlete.getProfilePicture(),
-                athleteResponse.getStravaAuthorizationToken(),
-                athleteResponse.getStravaRefreshToken(),
+    private UserAthlete athleteResponseToUserAthlete(AthleteAuthorizationResponse athleteResponse){
+        UserAthlete userAthlete = new UserAthlete(athleteResponse.getAthlete().getId(),
+                athleteResponse.getAthlete().getFirstname(),
+                athleteResponse.getAthlete().getLastname(),
+                athleteResponse.getAthlete().getProfile_medium(),
+                athleteResponse.getToken(),
+                athleteResponse.getRefreshToken(),
                 getUserToken()
         );
         return userAthlete;
