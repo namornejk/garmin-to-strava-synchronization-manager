@@ -6,10 +6,7 @@ import cz.uhk.garmintostravasynchronizationmanager.model.AthleteResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.AuthorizationResponse;
 import cz.uhk.garmintostravasynchronizationmanager.service.StravaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,11 +20,6 @@ public class StravaController {
         this.stravaService = stravaService;
     }
 
-    @GetMapping("/athlete")
-    public AthleteResponse fetchProfile(@RequestParam(name = "token") String token) {
-        return stravaService.getProfile(token).get();
-    }
-
     @PostMapping("/refreshToken")
     public AuthorizationResponse refreshToken(@RequestParam(name = "token") String token) {
         return stravaService.refreshUserToken(token).get();
@@ -38,8 +30,13 @@ public class StravaController {
         return stravaService.authorize(code).get();
     }
 
+    @GetMapping("/athlete")
+    public AthleteResponse fetchProfile(@RequestHeader(name = "Authorization") String token) {
+        return stravaService.getProfile(token).get();
+    }
+
     @GetMapping("/activities")
-    public List<AthleteActivityResponse> fetchUserActivities(@RequestParam(name = "token") String token) {
+    public List<AthleteActivityResponse> fetchUserActivities(@RequestHeader(name = "Authorization") String token) {
         return stravaService.getUserActivities(token).get();
     }
 }
