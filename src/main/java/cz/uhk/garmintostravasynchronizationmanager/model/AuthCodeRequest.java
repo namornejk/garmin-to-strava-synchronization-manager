@@ -2,7 +2,7 @@ package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AuthorizationRequest {
+public class AuthCodeRequest {
 
     @JsonProperty("client_id")
     private String clientId;
@@ -13,27 +13,25 @@ public class AuthorizationRequest {
     @JsonProperty("grant_type")
     private String grantType;
 
-    @JsonProperty("refresh_token")
-    private String refreshToken;
+    private String code;
 
-
-    public AuthorizationRequest(String clientId, String clientSecret, String grantType, String refreshToken) {
+    public AuthCodeRequest(String clientId, String clientSecret, String grantType, String code) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.grantType = grantType;
-        this.refreshToken = refreshToken;
+        this.code = code;
+    }
+
+    public AuthCodeRequest() {
     }
 
     @Override
     public String toString() {
-        return "AuthorizationRequest{" +
+        return "AuthCodeRequest{" +
                 "clientId='" + clientId + '\'' +
                 ", clientSecret='" + clientSecret + '\'' +
                 ", grantType='" + grantType + '\'' +
-                ", refreshToken='" + refreshToken + '\'' +
+                ", code='" + code + '\'' +
                 '}';
-    }
-
-    public AuthorizationRequest() {
     }
 }
