@@ -1,6 +1,6 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
-import cz.uhk.garmintostravasynchronizationmanager.dao.IAthleteDao;
+import cz.uhk.garmintostravasynchronizationmanager.dao.AthleteDao;
 import cz.uhk.garmintostravasynchronizationmanager.model.AthleteResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.AuthorizationRequest;
 import cz.uhk.garmintostravasynchronizationmanager.model.AuthorizationResponse;
@@ -10,7 +10,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.Optional;
 
 @Service
@@ -21,14 +20,14 @@ public class StravaService {
     private static final String ATHLETE = "/athlete";
     private static final String OAUTH = "/oauth/token";
 
-    private final IAthleteDao athleteDao;
+    private final AthleteDao athleteDao;
     private final RestTemplate restTemplate;
 
     @Autowired
     private Environment env;
 
     @Autowired
-    public StravaService(IAthleteDao athleteDao, RestTemplate restTemplate) {
+    public StravaService(AthleteDao athleteDao, RestTemplate restTemplate) {
         this.athleteDao = athleteDao;
         this.restTemplate = restTemplate;
     }
