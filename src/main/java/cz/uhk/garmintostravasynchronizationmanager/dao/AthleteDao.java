@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface IAthleteDao extends JpaRepository<User, Long> { }
+public interface AthleteDao extends JpaRepository<User, Long> { }
