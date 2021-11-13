@@ -24,12 +24,12 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity(String name){
+    public Activity(String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Activity(User user, String name){
+    public Activity(User user, String name) {
         this.id = id;
         this.user = user;
         this.name = name;
