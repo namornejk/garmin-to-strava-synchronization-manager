@@ -2,6 +2,8 @@ package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
+
 public class AthleteActivityResponse {
 
     private double id;
@@ -15,16 +17,34 @@ public class AthleteActivityResponse {
     @JsonProperty("elapsed_time")
     private double elapsedTime;
 
+    @JsonProperty("start_date")
+    private Date startDate;
+
+    @JsonProperty("upload_id")
+    private long uploadId;
+
+    @JsonProperty("total_elevation_gain")
+    private float totalElevationGain;
+
     @JsonProperty("private")
     private boolean privateActivity;
 
-    public AthleteActivityResponse(double id, String name, double distance, double movingTime, double elapsedTime, boolean privateActivity) {
+    private boolean commute;
+
+    private boolean manual;
+
+    public AthleteActivityResponse(double id, String name, double distance, double movingTime, double elapsedTime, Date startDate, long uploadId, float totalElevationGain, boolean privateActivity, boolean commute, boolean manual) {
         this.id = id;
         this.name = name;
         this.distance = distance;
         this.movingTime = movingTime;
         this.elapsedTime = elapsedTime;
+        this.startDate = startDate;
+        this.uploadId = uploadId;
+        this.totalElevationGain = totalElevationGain;
         this.privateActivity = privateActivity;
+        this.commute = commute;
+        this.manual = manual;
     }
 
     public AthleteActivityResponse() {
