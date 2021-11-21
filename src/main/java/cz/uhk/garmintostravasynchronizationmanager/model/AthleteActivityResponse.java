@@ -1,9 +1,10 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import lombok.Data;
 import java.util.Date;
 
+@Data
 public class AthleteActivityResponse {
 
     private double id;
@@ -33,64 +34,4 @@ public class AthleteActivityResponse {
 
     private boolean manual;
 
-    public AthleteActivityResponse(double id, String name, double distance, double movingTime, double elapsedTime, Date startDate, long uploadId, float totalElevationGain, boolean privateActivity, boolean commute, boolean manual) {
-        this.id = id;
-        this.name = name;
-        this.distance = distance;
-        this.movingTime = movingTime;
-        this.elapsedTime = elapsedTime;
-        this.startDate = startDate;
-        this.uploadId = uploadId;
-        this.totalElevationGain = totalElevationGain;
-        this.privateActivity = privateActivity;
-        this.commute = commute;
-        this.manual = manual;
-    }
-
-    public AthleteActivityResponse() {
-    }
-
-    public double getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
-
-    public double getMovingTime() {
-        return movingTime;
-    }
-
-    public void setMovingTime(double movingTime) {
-        this.movingTime = movingTime;
-    }
-
-    public double getElapsedTime() {
-        return elapsedTime;
-    }
-
-    public void setElapsedTime(double elapsedTime) {
-        this.elapsedTime = elapsedTime;
-    }
-
-    public boolean isPrivateActivity() {
-        return privateActivity;
-    }
-
-    public void setPrivateActivity(boolean privateActivity) {
-        this.privateActivity = privateActivity;
-    }
 }

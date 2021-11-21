@@ -1,7 +1,11 @@
 package cz.uhk.garmintostravasynchronizationmanager.model.webhook;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
 public class WebhookRequest {
 
     @JsonProperty("client_id")
@@ -15,23 +19,4 @@ public class WebhookRequest {
 
     @JsonProperty("verify_token")
     private String verifyToken;
-
-    public WebhookRequest(String clientId, String clientSecret, String callbackUrl, String verifyToken) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.callbackUrl = callbackUrl;
-        this.verifyToken = verifyToken;
-    }
-
-    @Override
-    public String toString() {
-        return "WebhookRequest{" +
-                "clientId='" + clientId + '\'' +
-                ", clientSecret='" + clientSecret + '\'' +
-                ", callbackUrl='" + callbackUrl + '\'' +
-                '}';
-    }
-
-    public WebhookRequest() {
-    }
 }

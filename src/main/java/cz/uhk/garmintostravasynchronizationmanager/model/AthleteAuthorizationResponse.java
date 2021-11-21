@@ -1,7 +1,9 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class AthleteAuthorizationResponse {
 
     @JsonProperty("access_token")
@@ -13,12 +15,4 @@ public class AthleteAuthorizationResponse {
     @JsonProperty("athlete")
     private AthleteResponse athlete;
 
-    public AthleteAuthorizationResponse(String token, String refreshToken, AthleteResponse athlete) {
-        this.token = token;
-        this.refreshToken = refreshToken;
-        this.athlete = athlete;
-    }
-
-    public AthleteAuthorizationResponse() {
-    }
 }

@@ -1,13 +1,11 @@
 package cz.uhk.garmintostravasynchronizationmanager.model.webhook;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
+@Data
 public class WebhookConfirmResponse {
 
     @JsonProperty("hub.challenge")
-    final String hubChallenge;
-
-    public WebhookConfirmResponse(String hubChallenge) {
-        this.hubChallenge = hubChallenge;
-    }
+    private final String hubChallenge;
 }

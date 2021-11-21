@@ -1,6 +1,5 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
-import cz.uhk.garmintostravasynchronizationmanager.dao.AthleteDao;
 import cz.uhk.garmintostravasynchronizationmanager.model.*;
 import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookId;
 import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookRequest;
@@ -45,9 +44,7 @@ public class StravaService {
         final HttpHeaders headers = createJsonHeader();
         headers.set("Authorization", bearerToken(token));
 
-        HttpEntity<AuthorizationRequest> request = new HttpEntity<>(headers);
-
-        final ResponseEntity<AthleteResponse> response = restTemplate.exchange(url, HttpMethod.GET, request, AthleteResponse.class);
+        final ResponseEntity<AthleteResponse> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<AuthorizationRequest>(headers), AthleteResponse.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
         } else {
@@ -61,9 +58,7 @@ public class StravaService {
         final HttpHeaders headers = createJsonHeader();
         headers.set("Authorization", bearerToken(token));
 
-        HttpEntity<AuthorizationRequest> request = new HttpEntity<>(headers);
-
-        final ResponseEntity<AthleteActivityResponse> response = restTemplate.exchange(url, HttpMethod.GET, request, AthleteActivityResponse.class);
+        final ResponseEntity<AthleteActivityResponse> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), AthleteActivityResponse.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
         } else {
@@ -80,8 +75,7 @@ public class StravaService {
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("code", code).build();
 
-        HttpEntity<AuthCodeRequest> requestEntity = new HttpEntity<>(null, createJsonHeader());
-        ResponseEntity<AthleteAuthorizationResponse> response = restTemplate.exchange(builder.toString(), HttpMethod.POST, requestEntity, AthleteAuthorizationResponse.class);
+        ResponseEntity<AthleteAuthorizationResponse> response = restTemplate.exchange(builder.toString(), HttpMethod.POST, new HttpEntity<>(null, createJsonHeader()), AthleteAuthorizationResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
@@ -100,8 +94,8 @@ public class StravaService {
                 refreshToken
         );
 
-        final HttpEntity<AuthorizationRequest> requestEntity = new HttpEntity<>(requestBody, createJsonHeader());
-        final ResponseEntity<AuthorizationResponse> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AuthorizationResponse.class);
+        final ResponseEntity<AuthorizationResponse> response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(requestBody, createJsonHeader()),
+                AuthorizationResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
@@ -116,8 +110,7 @@ public class StravaService {
         final HttpHeaders header = createJsonHeader();
         header.set("Authorization", bearerToken(token));
 
-        final HttpEntity<AthleteActivityResponse> requestEntity = new HttpEntity<>(header);
-        final ResponseEntity<AthleteActivityResponse[]> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, AthleteActivityResponse[].class);
+        final ResponseEntity<AthleteActivityResponse[]> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(header), AthleteActivityResponse[].class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
