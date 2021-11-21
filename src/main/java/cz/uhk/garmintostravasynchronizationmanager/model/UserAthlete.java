@@ -1,7 +1,11 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
+import cz.uhk.garmintostravasynchronizationmanager.model.filters.ActivityFilter;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class UserAthlete {
@@ -11,6 +15,10 @@ public class UserAthlete {
     private String firstName;
     private String lastName;
     private String profilePicture;
+
+    @OneToMany( mappedBy="user" )
+    private List<ActivityFilter> filters;
+
     private String stravaAuthorizationToken;
     private String stravaRefreshToken;
     private String userToken;

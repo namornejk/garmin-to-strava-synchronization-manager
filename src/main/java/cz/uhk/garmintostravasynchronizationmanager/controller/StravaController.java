@@ -1,4 +1,4 @@
-package cz.uhk.garmintostravasynchronizationmanager.controller.rest;
+package cz.uhk.garmintostravasynchronizationmanager.controller;
 
 import cz.uhk.garmintostravasynchronizationmanager.model.AthleteActivityResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.AthleteAuthorizationResponse;
