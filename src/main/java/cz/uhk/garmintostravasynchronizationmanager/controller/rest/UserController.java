@@ -1,38 +1,35 @@
 package cz.uhk.garmintostravasynchronizationmanager.controller.rest;
 
+import cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants;
+import cz.uhk.garmintostravasynchronizationmanager.model.TokenResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.UserAthlete;
 import cz.uhk.garmintostravasynchronizationmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     private UserService userService;
 
-    public UserController(){}
+    public UserController() {
+    }
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @PostMapping("/code")
-    public ResponseEntity<UserAthlete> codeAuth(@RequestParam(name = "code")String code){
+    @PostMapping("/auth")
+    public TokenResponse codeAuth(@RequestParam(name = "code") String code) {
         UserAthlete userAthlete = userService.initAuth(code).get();
-
-        ResponseEntity<UserAthlete> response = ResponseEntity.ok()
-                .header("authorization", userAthlete.getUserToken())
-                .body(userAthlete);
-
-        return response;
+        return new TokenResponse(userAthlete.getUserToken());
     }
 
-    @PostMapping("/me")
-    public UserAthlete getUser(@RequestParam(name = "userToken")String userToken){
-        return userService.getUser(userToken);
+    @GetMapping("/me")
+    public UserAthlete getUser(@RequestHeader(name = ApiConstants.HEADER_NAME) String token) {
+        final String jwtToken = token.replaceAll(ApiConstants.PREFIX, "").trim();
+        return userService.getUser(jwtToken);
     }
 }

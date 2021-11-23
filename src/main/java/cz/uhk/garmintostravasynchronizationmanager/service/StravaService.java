@@ -1,5 +1,6 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
+import cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants;
 import cz.uhk.garmintostravasynchronizationmanager.dao.AthleteDao;
 import cz.uhk.garmintostravasynchronizationmanager.model.*;
 import net.minidev.json.JSONObject;
@@ -22,14 +23,12 @@ public class StravaService {
     private static final String ACTIVITIES = "/athlete/activities";
     private static final String OAUTH = "/oauth/token";
 
-    private final AthleteDao athleteDao;
     private final RestTemplate restTemplate;
 
     private final Environment env;
 
     @Autowired
-    public StravaService(AthleteDao athleteDao, RestTemplate restTemplate, Environment env) {
-        this.athleteDao = athleteDao;
+    public StravaService(RestTemplate restTemplate, Environment env) {
         this.restTemplate = restTemplate;
         this.env = env;
     }
@@ -93,7 +92,7 @@ public class StravaService {
         String url = BASE_URL + ACTIVITIES;
 
         HttpHeaders header = createJsonHeader();
-        header.set("Authorization", bearerToken(token));
+        header.set(ApiConstants.HEADER_NAME, bearerToken(token));
 
         HttpEntity<AthleteActivityResponse> requestEntity = new HttpEntity<>(header);
         ResponseEntity<AthleteActivityResponse[]> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, AthleteActivityResponse[].class);
@@ -112,7 +111,7 @@ public class StravaService {
     }
 
     private String bearerToken(String token) {
-        return "Bearer " + token;
+        return token;
     }
 }
 
