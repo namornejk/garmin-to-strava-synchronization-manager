@@ -44,7 +44,7 @@ public class StravaService {
         final String url = BASE_URL + ATHLETE;
 
         final HttpHeaders headers = createJsonHeader();
-        headers.set("Authorization", bearerToken(token));
+        headers.set(ApiConstants.HEADER_NAME, bearerToken(token));
 
         final ResponseEntity<AthleteResponse> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<AuthorizationRequest>(headers), AthleteResponse.class);
         if (response.getStatusCode() != HttpStatus.OK) {
@@ -58,7 +58,7 @@ public class StravaService {
         final String url = BASE_URL + ACTIVITIES + "/" + id + "?include_all_efforts=false";
 
         final HttpHeaders headers = createJsonHeader();
-        headers.set("Authorization", bearerToken(token));
+        headers.set(ApiConstants.HEADER_NAME, bearerToken(token));
 
         final ResponseEntity<AthleteActivityResponse> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), AthleteActivityResponse.class);
         if (response.getStatusCode() != HttpStatus.OK) {
@@ -72,8 +72,8 @@ public class StravaService {
         final String url = BASE_URL + OAUTH;
 
         final UriComponents builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("client_id", env.getProperty("CLIENT_ID"))
-                .queryParam("client_secret", env.getProperty("CLIENT_SECRET"))
+                .queryParam("client_id", env.getProperty("client_id"))
+                .queryParam("client_secret", env.getProperty("client_secret"))
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("code", code).build();
 
@@ -90,8 +90,8 @@ public class StravaService {
         final String url = BASE_URL + OAUTH;
 
         final AuthorizationRequest requestBody = new AuthorizationRequest(
-                env.getProperty("CLIENT_ID"),
-                env.getProperty("CLIENT_SECRET"),
+                env.getProperty("client_id"),
+                env.getProperty("client_secret"),
                 "refresh_token",
                 refreshToken
         );
@@ -125,10 +125,10 @@ public class StravaService {
         final String url = BASE_URL + SUBSCRIPTIONS;
 
         final WebhookRequest requestBody = new WebhookRequest(
-                env.getProperty("CLIENT_ID"),
-                env.getProperty("CLIENT_SECRET"),
+                env.getProperty("client_id"),
+                env.getProperty("client_secret"),
                 CALLBACK_BASE_URL + EVENTS,
-                env.getProperty("APP_TOKEN")
+                env.getProperty("app_token")
         );
 
         final HttpEntity<WebhookRequest> requestEntity = new HttpEntity<>(requestBody, createJsonHeader());
@@ -136,7 +136,7 @@ public class StravaService {
     }
 
     public HttpStatus checkVerifiedToken(String token) {
-        String serverToken = env.getProperty("APP_TOKEN");
+        String serverToken = env.getProperty("app_token");
 
         if (Objects.requireNonNull(serverToken).equals(token)) {
             return HttpStatus.OK;
