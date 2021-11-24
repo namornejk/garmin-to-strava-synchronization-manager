@@ -1,5 +1,7 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
+import cz.uhk.garmintostravasynchronizationmanager.errorhandling.exceptions.InternalErrorException;
+import cz.uhk.garmintostravasynchronizationmanager.errorhandling.exceptions.ItemNotFoundException;
 import cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants;
 import cz.uhk.garmintostravasynchronizationmanager.dao.AthleteDao;
 import cz.uhk.garmintostravasynchronizationmanager.model.AthleteAuthorizationResponse;
@@ -38,17 +40,27 @@ public class UserService {
         athleteDao.save(userAthlete);
     }
 
-    public Optional<UserAthlete> initAuth(String code){
-        AthleteAuthorizationResponse athleteAuthorizationResponse = stravaService.authorize(code).get();
-        UserAthlete userAthlete = athleteResponseToUserAthlete(athleteAuthorizationResponse);
+    public Optional<UserAthlete> initAuth(String code) {
+        try {
+            AthleteAuthorizationResponse athleteAuthorizationResponse = stravaService.authorize(code).get();
+            UserAthlete userAthlete = athleteResponseToUserAthlete(athleteAuthorizationResponse);
 
-        putAthlete(userAthlete);
+            putAthlete(userAthlete);
 
-        return Optional.of(userAthlete);
+            return Optional.of(userAthlete);
+        } catch (Exception e) {
+            throw new InternalErrorException("Error while getting athlete's data.");
+        }
     }
 
-    public UserAthlete getUser(String userToken){
-        return athleteDao.findByUserToken(userToken);
+    public UserAthlete getUser(String userToken) {
+        final UserAthlete userAthlete = athleteDao.findByUserToken(userToken);
+
+        if (userAthlete == null) {
+            throw new ItemNotFoundException("User was not found.");
+        } else {
+            return userAthlete;
+        }
     }
 
     private UserAthlete athleteResponseToUserAthlete(AthleteAuthorizationResponse athleteResponse){
@@ -65,7 +77,7 @@ public class UserService {
 
     private String getJwtToken(AthleteAuthorizationResponse athleteResponse) {
 
-        String key = env.getProperty("key");
+        String key = env.getProperty(ApiConstants.JWT_TOKEN);
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
@@ -73,7 +85,7 @@ public class UserService {
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
 
-        String token = Jwts
+        return Jwts
                 .builder()
                 .setId(athleteResponse.getAthlete().getId())
                 .setSubject(athleteResponse.getAthlete().getUsername())
@@ -85,7 +97,5 @@ public class UserService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + ApiConstants.EXPIRATION_TIME))
                 .signWith(signingKey, SignatureAlgorithm.HS256).compact();
-
-        return token;
     }
 }

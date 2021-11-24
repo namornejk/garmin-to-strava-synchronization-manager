@@ -1,8 +1,11 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
+import com.sun.istack.NotNull;
 import cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants;
 import cz.uhk.garmintostravasynchronizationmanager.dao.AthleteDao;
+import cz.uhk.garmintostravasynchronizationmanager.errorhandling.exceptions.InvalidInputException;
 import cz.uhk.garmintostravasynchronizationmanager.model.*;
+import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookConfirmResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookId;
 import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,9 +138,12 @@ public class StravaService {
         return restTemplate.exchange(url, HttpMethod.POST, requestEntity, WebhookId.class);
     }
 
-    public HttpStatus checkVerifiedToken(String token) {
-        String serverToken = env.getProperty("app_token");
+    public HttpStatus checkVerifiedToken(@NotNull  String hubChallenge, @NotNull String token) {
+        if (token.isBlank() && hubChallenge.isBlank()) {
+            throw new InvalidInputException("Invalid hub.challenge or verify_token");
+        }
 
+        String serverToken = env.getProperty("app_token");
         if (Objects.requireNonNull(serverToken).equals(token)) {
             return HttpStatus.OK;
         } else {

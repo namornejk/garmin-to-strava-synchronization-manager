@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("/webhook")
 public class WebhookController {
 
     private final StravaService stravaService;
@@ -19,7 +20,7 @@ public class WebhookController {
         this.stravaService = stravaService;
     }
 
-    @PostMapping(value = "/webhook")
+    @PostMapping()
     @ResponseBody
     public ResponseEntity subscribe(@RequestBody WebhookEvent webhookEvent) {
         if (webhookEvent != null) {
@@ -30,13 +31,9 @@ public class WebhookController {
         }
     }
 
-    @GetMapping("/webhook")
+    @GetMapping()
     public ResponseEntity<WebhookConfirmResponse> confirmWebhook(@RequestParam(name = "hub.challenge") String hubChallenge, @RequestParam(name = "hub.verify_token") String verifyToken) {
-        if (verifyToken != null) {
-            final HttpStatus status = stravaService.checkVerifiedToken(verifyToken);
-            return ResponseEntity.status(status).body(new WebhookConfirmResponse(hubChallenge));
-        } else {
-            return ResponseEntity.status(400).build();
-        }
+        final HttpStatus status = stravaService.checkVerifiedToken(hubChallenge, verifyToken);
+        return ResponseEntity.status(status).body(new WebhookConfirmResponse(hubChallenge));
     }
 }

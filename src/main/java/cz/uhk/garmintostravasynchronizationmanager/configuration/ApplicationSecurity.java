@@ -14,6 +14,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants.SIGN_UP_URL;
+import static cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants.WEBHOOK_URL;
 
 @EnableWebSecurity
 @Configuration
@@ -31,6 +32,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
                 .addFilterAt(new JWTAuthorizationFilter(env), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.GET, WEBHOOK_URL).permitAll()
                 .anyRequest().authenticated();
     }
 

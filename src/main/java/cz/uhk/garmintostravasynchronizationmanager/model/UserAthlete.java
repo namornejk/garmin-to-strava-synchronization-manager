@@ -27,6 +27,7 @@ public class UserAthlete {
     @JsonIgnore
     private String stravaRefreshToken;
 
+    @JsonIgnore
     @Column(length = 1200)
     private String userToken;
 
