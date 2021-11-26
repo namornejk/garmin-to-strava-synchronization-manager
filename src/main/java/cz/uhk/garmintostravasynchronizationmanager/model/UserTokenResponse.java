@@ -3,8 +3,9 @@ package cz.uhk.garmintostravasynchronizationmanager.model;
 import lombok.Data;
 
 @Data
-public class TokenResponse {
+public class UserTokenResponse {
 
     final String token;
+    final UserAthlete user;
 
 }

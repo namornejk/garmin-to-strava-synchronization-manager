@@ -1,7 +1,8 @@
 package cz.uhk.garmintostravasynchronizationmanager.controller.rest;
 
 import cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants;
-import cz.uhk.garmintostravasynchronizationmanager.model.TokenResponse;
+import cz.uhk.garmintostravasynchronizationmanager.model.RequestCode;
+import cz.uhk.garmintostravasynchronizationmanager.model.UserTokenResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.UserAthlete;
 import cz.uhk.garmintostravasynchronizationmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService userService;
-
-    public UserController() {
-    }
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -22,9 +20,9 @@ public class UserController {
     }
 
     @PostMapping("/auth")
-    public TokenResponse codeAuth(@RequestParam(name = "code") String code) {
-        UserAthlete userAthlete = userService.initAuth(code).get();
-        return new TokenResponse(userAthlete.getUserToken());
+    public UserTokenResponse codeAuth(@RequestBody() RequestCode requestCode) {
+        UserAthlete userAthlete = userService.initAuth(requestCode.getCode());
+        return new UserTokenResponse(userAthlete.getUserToken(), userAthlete);
     }
 
     @GetMapping("/me")

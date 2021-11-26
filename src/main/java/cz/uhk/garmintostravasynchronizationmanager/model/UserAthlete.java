@@ -17,6 +17,7 @@ public class UserAthlete {
 
     @Id
     private String id;
+    private String username;
     private String firstName;
     private String lastName;
     private String profilePicture;

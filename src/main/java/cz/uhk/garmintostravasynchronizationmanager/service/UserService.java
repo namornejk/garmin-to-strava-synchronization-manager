@@ -19,7 +19,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,14 +39,14 @@ public class UserService {
         athleteDao.save(userAthlete);
     }
 
-    public Optional<UserAthlete> initAuth(String code) {
+    public UserAthlete initAuth(String code) {
         try {
             AthleteAuthorizationResponse athleteAuthorizationResponse = stravaService.authorize(code).get();
             UserAthlete userAthlete = athleteResponseToUserAthlete(athleteAuthorizationResponse);
 
             putAthlete(userAthlete);
 
-            return Optional.of(userAthlete);
+            return userAthlete;
         } catch (Exception e) {
             throw new InternalErrorException("Error while getting athlete's data.");
         }
@@ -66,6 +65,7 @@ public class UserService {
     private UserAthlete athleteResponseToUserAthlete(AthleteAuthorizationResponse athleteResponse){
         return new UserAthlete(
                 athleteResponse.getAthlete().getId(),
+                athleteResponse.getAthlete().getUsername(),
                 athleteResponse.getAthlete().getFirstname(),
                 athleteResponse.getAthlete().getLastname(),
                 athleteResponse.getAthlete().getProfile_medium(),
@@ -89,7 +89,6 @@ public class UserService {
                 .builder()
                 .setId(athleteResponse.getAthlete().getId())
                 .setSubject(athleteResponse.getAthlete().getUsername())
-                .claim("athlete", athleteResponse.getAthlete())
                 .claim("authorities",
                         grantedAuthorities.stream()
                                 .map(GrantedAuthority::getAuthority)
