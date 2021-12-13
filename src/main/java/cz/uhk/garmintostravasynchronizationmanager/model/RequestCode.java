@@ -1,9 +1,11 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class RequestCode {
 
-    final String code;
+    String code;
 }

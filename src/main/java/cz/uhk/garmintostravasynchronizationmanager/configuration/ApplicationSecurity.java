@@ -13,12 +13,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants.SIGN_UP_URL;
-import static cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants.WEBHOOK_URL;
+import static cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants.*;
 
 @EnableWebSecurity
 @Configuration
 public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
+
+    private static final String[] AUTH_WHITELIST = {
+            // -- swagger ui
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+    };
+
 
     @Autowired
     private Environment env;
@@ -33,6 +41,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(HttpMethod.GET, WEBHOOK_URL).permitAll()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated();
     }
 
