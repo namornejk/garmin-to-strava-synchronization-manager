@@ -1,7 +1,9 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class AuthCodeRequest {
 
     @JsonProperty("client_id")
@@ -14,16 +16,6 @@ public class AuthCodeRequest {
     private String grantType;
 
     private String code;
-
-    public AuthCodeRequest(String clientId, String clientSecret, String grantType, String code) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.grantType = grantType;
-        this.code = code;
-    }
-
-    public AuthCodeRequest() {
-    }
 
     @Override
     public String toString() {

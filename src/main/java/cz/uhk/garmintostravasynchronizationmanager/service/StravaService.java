@@ -1,8 +1,13 @@
 package cz.uhk.garmintostravasynchronizationmanager.service;
 
+import com.sun.istack.NotNull;
+import cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants;
 import cz.uhk.garmintostravasynchronizationmanager.dao.AthleteDao;
+import cz.uhk.garmintostravasynchronizationmanager.errorhandling.exceptions.InvalidInputException;
 import cz.uhk.garmintostravasynchronizationmanager.model.*;
-import net.minidev.json.JSONObject;
+import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookConfirmResponse;
+import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookId;
+import cz.uhk.garmintostravasynchronizationmanager.model.webhook.WebhookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -18,31 +23,47 @@ public class StravaService {
 
     protected String BASE_URL = "https://www.strava.com/api/v3";
 
-    private static final String ATHLETE = "/athlete";
-    private static final String ACTIVITIES = "/athlete/activities";
-    private static final String OAUTH = "/oauth/token";
+    //TODO: upravit dle nasazení
+    protected String CALLBACK_BASE_URL = "http://0bb2-194-12-38-64.ngrok.io";
 
-    private final AthleteDao athleteDao;
+    private static final String ATHLETE = "/athlete";
+    private static final String ATHLETE_ACTIVITIES = "/athlete/activities";
+    private static final String ACTIVITIES = "/activities";
+    private static final String OAUTH = "/oauth/token";
+    private static final String SUBSCRIPTIONS = "/push_subscriptions";
+    private static final String EVENTS = "/webhook";
+
     private final RestTemplate restTemplate;
 
     private final Environment env;
 
     @Autowired
-    public StravaService(AthleteDao athleteDao, RestTemplate restTemplate, Environment env) {
-        this.athleteDao = athleteDao;
+    public StravaService(RestTemplate restTemplate, Environment env) {
         this.restTemplate = restTemplate;
         this.env = env;
     }
 
     public Optional<AthleteResponse> getProfile(String token) {
-        String url = BASE_URL + ATHLETE;
+        final String url = BASE_URL + ATHLETE;
 
-        HttpHeaders headers = createJsonHeader();
-        headers.set("Authorization", bearerToken(token));
+        final HttpHeaders headers = createJsonHeader();
+        headers.set(ApiConstants.HEADER_NAME, bearerToken(token));
 
-        HttpEntity<AuthorizationRequest> request = new HttpEntity<>(headers);
+        final ResponseEntity<AthleteResponse> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<AuthorizationRequest>(headers), AthleteResponse.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(response.getBody());
+        }
+    }
 
-        final ResponseEntity<AthleteResponse> response = restTemplate.exchange(url, HttpMethod.GET, request, AthleteResponse.class);
+    public Optional<AthleteActivityResponse> getActivityDetail(long id, String token) {
+        final String url = BASE_URL + ACTIVITIES + "/" + id + "?include_all_efforts=false";
+
+        final HttpHeaders headers = createJsonHeader();
+        headers.set(ApiConstants.HEADER_NAME, bearerToken(token));
+
+        final ResponseEntity<AthleteActivityResponse> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), AthleteActivityResponse.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
         } else {
@@ -51,16 +72,15 @@ public class StravaService {
     }
 
     public Optional<AthleteAuthorizationResponse> authorize(String code) {
-        String url = BASE_URL + OAUTH;
+        final String url = BASE_URL + OAUTH;
 
-        UriComponents builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("client_id", env.getProperty("CLIENT_ID"))
-                .queryParam("client_secret",env.getProperty("CLIENT_SECRET"))
-                .queryParam("grant_type","authorization_code")
-                .queryParam("code",code).build();
+        final UriComponents builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("client_id", env.getProperty("client_id"))
+                .queryParam("client_secret", env.getProperty("client_secret"))
+                .queryParam("grant_type", "authorization_code")
+                .queryParam("code", code).build();
 
-        HttpEntity<AuthCodeRequest> requestEntity = new HttpEntity<>(null, createJsonHeader());
-        ResponseEntity<AthleteAuthorizationResponse> response = restTemplate.exchange(builder.toString(), HttpMethod.POST, requestEntity, AthleteAuthorizationResponse.class);
+        ResponseEntity<AthleteAuthorizationResponse> response = restTemplate.exchange(builder.toString(), HttpMethod.POST, new HttpEntity<>(null, createJsonHeader()), AthleteAuthorizationResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
@@ -70,17 +90,17 @@ public class StravaService {
     }
 
     public Optional<AuthorizationResponse> refreshUserToken(String refreshToken) {
-        String url = BASE_URL + OAUTH;
+        final String url = BASE_URL + OAUTH;
 
-        AuthorizationRequest requestBody = new AuthorizationRequest(
-                env.getProperty("CLIENT_ID"),
-                env.getProperty("CLIENT_SECRET"),
+        final AuthorizationRequest requestBody = new AuthorizationRequest(
+                env.getProperty("client_id"),
+                env.getProperty("client_secret"),
                 "refresh_token",
                 refreshToken
         );
 
-        HttpEntity<AuthorizationRequest> requestEntity = new HttpEntity<>(requestBody, createJsonHeader());
-        ResponseEntity<AuthorizationResponse> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AuthorizationResponse.class);
+        final ResponseEntity<AuthorizationResponse> response = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(requestBody, createJsonHeader()),
+                AuthorizationResponse.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
@@ -90,18 +110,44 @@ public class StravaService {
     }
 
     public Optional<List<AthleteActivityResponse>> getUserActivities(String token) {
-        String url = BASE_URL + ACTIVITIES;
+        final String url = BASE_URL + ATHLETE_ACTIVITIES;
 
         HttpHeaders header = createJsonHeader();
-        header.set("Authorization", bearerToken(token));
+        header.set(ApiConstants.HEADER_NAME, bearerToken(token));
 
-        HttpEntity<AthleteActivityResponse> requestEntity = new HttpEntity<>(header);
-        ResponseEntity<AthleteActivityResponse[]> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, AthleteActivityResponse[].class);
+        final ResponseEntity<AthleteActivityResponse[]> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(header), AthleteActivityResponse[].class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
             return Optional.empty();
         } else {
             return Optional.of(Arrays.asList(Objects.requireNonNull(response.getBody())));
+        }
+    }
+
+    public ResponseEntity<WebhookId> subscribeToWebhook() {
+        final String url = BASE_URL + SUBSCRIPTIONS;
+
+        final WebhookRequest requestBody = new WebhookRequest(
+                env.getProperty("client_id"),
+                env.getProperty("client_secret"),
+                CALLBACK_BASE_URL + EVENTS,
+                env.getProperty("app_token")
+        );
+
+        final HttpEntity<WebhookRequest> requestEntity = new HttpEntity<>(requestBody, createJsonHeader());
+        return restTemplate.exchange(url, HttpMethod.POST, requestEntity, WebhookId.class);
+    }
+
+    public HttpStatus checkVerifiedToken(@NotNull  String hubChallenge, @NotNull String token) {
+        if (token.isBlank() && hubChallenge.isBlank()) {
+            throw new InvalidInputException("Invalid hub.challenge or verify_token");
+        }
+
+        String serverToken = env.getProperty("app_token");
+        if (Objects.requireNonNull(serverToken).equals(token)) {
+            return HttpStatus.OK;
+        } else {
+            return HttpStatus.BAD_REQUEST;
         }
     }
 
@@ -112,7 +158,7 @@ public class StravaService {
     }
 
     private String bearerToken(String token) {
-        return "Bearer " + token;
+        return token;
     }
 }
 

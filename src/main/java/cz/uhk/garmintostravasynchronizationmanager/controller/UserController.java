@@ -1,38 +1,52 @@
 package cz.uhk.garmintostravasynchronizationmanager.controller;
 
+import cz.uhk.garmintostravasynchronizationmanager.constants.ApiConstants;
+import cz.uhk.garmintostravasynchronizationmanager.model.RequestCode;
+import cz.uhk.garmintostravasynchronizationmanager.model.UserTokenResponse;
 import cz.uhk.garmintostravasynchronizationmanager.model.UserAthlete;
 import cz.uhk.garmintostravasynchronizationmanager.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/users")
+@Api(value = "User", tags = "User")
 public class UserController {
 
-    private UserService userService;
-
-    public UserController(){}
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @PostMapping("/code")
-    public ResponseEntity<UserAthlete> codeAuth(@RequestParam(name = "code")String code){
-        UserAthlete userAthlete = userService.initAuth(code).get();
-
-        ResponseEntity<UserAthlete> response = ResponseEntity.ok()
-                .header("authorization", userAthlete.getUserToken())
-                .body(userAthlete);
-
-        return response;
+    @Operation(summary = "Authenticate user", description = "Authenticate user via Strava auth code", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User authenticated", content = @Content(schema = @Schema(implementation = UserTokenResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal error"),
+    })
+    @PostMapping("/auth")
+    public UserTokenResponse codeAuth(@RequestBody() RequestCode requestCode) {
+        UserAthlete userAthlete = userService.initAuth(requestCode.getCode());
+        return new UserTokenResponse(userAthlete.getUserToken(), userAthlete);
     }
 
-    @PostMapping("/me")
-    public UserAthlete getUser(@RequestParam(name = "userToken")String userToken){
-        return userService.getUser(userToken);
+    @Operation(summary = "User detail", description = "Get information about me", tags = {"User"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User detail info", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserAthlete.class)))),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal error"),
+    })
+    @GetMapping("/me")
+    public UserAthlete getUser(@RequestHeader(name = ApiConstants.HEADER_NAME) String token) {
+        final String jwtToken = token.replaceAll(ApiConstants.PREFIX, "").trim();
+        return userService.getUser(jwtToken);
     }
 }

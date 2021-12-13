@@ -1,39 +1,21 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
+@AllArgsConstructor
 public class AuthorizationRequest {
 
     @JsonProperty("client_id")
-    private String clientId;
+    private final String clientId;
 
     @JsonProperty("client_secret")
-    private String clientSecret;
+    private final String clientSecret;
 
     @JsonProperty("grant_type")
-    private String grantType;
+    private final String grantType;
 
     @JsonProperty("refresh_token")
-    private String refreshToken;
+    private final String refreshToken;
 
-
-    public AuthorizationRequest(String clientId, String clientSecret, String grantType, String refreshToken) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.grantType = grantType;
-        this.refreshToken = refreshToken;
-    }
-
-    @Override
-    public String toString() {
-        return "AuthorizationRequest{" +
-                "clientId='" + clientId + '\'' +
-                ", clientSecret='" + clientSecret + '\'' +
-                ", grantType='" + grantType + '\'' +
-                ", refreshToken='" + refreshToken + '\'' +
-                '}';
-    }
-
-    public AuthorizationRequest() {
-    }
 }
