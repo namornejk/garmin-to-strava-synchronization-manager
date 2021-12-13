@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,6 +70,7 @@ public class UserService {
                 athleteResponse.getAthlete().getFirstname(),
                 athleteResponse.getAthlete().getLastname(),
                 athleteResponse.getAthlete().getProfile_medium(),
+                new ArrayList<>(), //TODO: dodělat napojení
                 athleteResponse.getToken(),
                 athleteResponse.getRefreshToken(),
                 getJwtToken(athleteResponse)
