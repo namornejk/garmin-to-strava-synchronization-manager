@@ -1,5 +1,7 @@
 package cz.uhk.garmintostravasynchronizationmanager.model;
 
+import cz.uhk.garmintostravasynchronizationmanager.model.filters.ActivityFilter;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Data
 @RequiredArgsConstructor
@@ -23,6 +27,10 @@ public class UserAthlete {
     private String profilePicture;
 
     @JsonIgnore
+
+    @OneToMany( mappedBy="user" )
+    private List<ActivityFilter> filters;
+
     private String stravaAuthorizationToken;
 
     @JsonIgnore
